@@ -1,12 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import ShowCard from './ShowCard';
+import AlphabeticalSeparator from './AlphabeticalSeparator';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
+import { groupShowsByLetter, getOrderedGroups } from '../utils/showGrouping';
 
 const { FiSearch } = FiIcons;
 
-const ShowGrid = ({ shows, loading, onUpdate }) => {
+const ShowGrid = ({ shows, loading, onUpdate, onDelete, onToggleCompletion }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-96">
@@ -17,7 +19,7 @@ const ShowGrid = ({ shows, loading, onUpdate }) => {
 
   if (shows.length === 0) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="text-center py-16"
@@ -31,19 +33,32 @@ const ShowGrid = ({ shows, loading, onUpdate }) => {
     );
   }
 
+  // Group shows alphabetically
+  const groupedShows = groupShowsByLetter(shows);
+  const orderedGroups = getOrderedGroups(groupedShows);
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      className="space-y-8"
     >
-      {shows.map((show, index) => (
-        <ShowCard 
-          key={`${show.title}-${show.season}-${show.episode}`} 
-          show={show} 
-          index={index} 
-          onUpdate={onUpdate}
-        />
+      {orderedGroups.map(({ letter, shows: groupShows, count }) => (
+        <div key={letter} id={`section-${letter}`}>
+          <AlphabeticalSeparator letter={letter} count={count} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {groupShows.map((show, index) => (
+              <ShowCard
+                key={`${show.title}-${show.season}-${show.episode}`}
+                show={show}
+                index={index}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+                onToggleCompletion={onToggleCompletion}
+              />
+            ))}
+          </div>
+        </div>
       ))}
     </motion.div>
   );

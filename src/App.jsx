@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from './components/Header';
 import Stats from './components/Stats';
-import ShowGrid from './components/ShowGrid';
+import ShowDisplay from './components/ShowDisplay';
 import AddShowModal from './components/AddShowModal';
 import { useShows } from './hooks/useShows';
 import { categories } from './data/shows';
@@ -10,7 +10,7 @@ import { categories } from './data/shows';
 function App() {
   const [showFilter, setShowFilter] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  
+
   const {
     shows,
     filteredShows,
@@ -20,7 +20,11 @@ function App() {
     setSelectedCategory,
     loading,
     updateShow,
-    addShow
+    deleteShow,
+    addShow,
+    toggleShowCompletion,
+    currentView,
+    setCurrentView
   } = useShows();
 
   const handleAddShow = (newShow) => {
@@ -38,16 +42,25 @@ function App() {
         showFilter={showFilter}
         setShowFilter={setShowFilter}
         onAddShow={() => setShowAddModal(true)}
+        currentView={currentView}
+        onViewChange={setCurrentView}
       />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:pl-20">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
           <Stats shows={shows} filteredShows={filteredShows} />
-          <ShowGrid shows={filteredShows} loading={loading} onUpdate={updateShow} />
+          <ShowDisplay
+            currentView={currentView}
+            shows={filteredShows}
+            loading={loading}
+            onUpdate={updateShow}
+            onDelete={deleteShow}
+            onToggleCompletion={toggleShowCompletion}
+          />
         </motion.div>
       </main>
 

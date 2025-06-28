@@ -3,11 +3,12 @@ import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 
-const { FiTv, FiPlay, FiCalendar, FiTrendingUp } = FiIcons;
+const { FiTv, FiCheck, FiCalendar, FiTrendingUp } = FiIcons;
 
 const Stats = ({ shows, filteredShows }) => {
   const totalShows = shows.length;
   const filteredCount = filteredShows.length;
+  const completedShows = shows.filter(show => show.completed).length;
   const categories = [...new Set(shows.map(show => show.category))].length;
   const totalEpisodes = shows.reduce((sum, show) => sum + show.episode, 0);
 
@@ -20,9 +21,9 @@ const Stats = ({ shows, filteredShows }) => {
       gradient: 'from-blue-500 to-blue-600'
     },
     {
-      label: 'Filtered Results',
-      value: filteredCount,
-      icon: FiPlay,
+      label: 'Completed',
+      value: completedShows,
+      icon: FiCheck,
       color: 'bg-green-500',
       gradient: 'from-green-500 to-green-600'
     },

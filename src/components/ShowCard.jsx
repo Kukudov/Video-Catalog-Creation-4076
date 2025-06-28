@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 
-const { FiPlay, FiCalendar, FiTv, FiEdit2, FiSave, FiX } = FiIcons;
+const { FiCalendar, FiTv, FiEdit2, FiSave, FiX, FiTrash2, FiCheck } = FiIcons;
 
-const ShowCard = ({ show, index, onUpdate }) => {
+const ShowCard = ({ show, index, onUpdate, onDelete, onToggleCompletion }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedShow, setEditedShow] = useState({
     season: show.season,
@@ -23,7 +23,9 @@ const ShowCard = ({ show, index, onUpdate }) => {
       'Crime': 'bg-orange-100 text-orange-800',
       'Animation': 'bg-green-100 text-green-800',
       'Thriller': 'bg-indigo-100 text-indigo-800',
-      'Adventure': 'bg-teal-100 text-teal-800'
+      'Adventure': 'bg-teal-100 text-teal-800',
+      'Musical': 'bg-rose-100 text-rose-800',
+      'Reality': 'bg-cyan-100 text-cyan-800'
     };
     return colors[category] || 'bg-gray-100 text-gray-800';
   };
@@ -53,28 +55,63 @@ const ShowCard = ({ show, index, onUpdate }) => {
     }
   };
 
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to delete "${show.title}"?`)) {
+      onDelete(show.title);
+    }
+  };
+
+  const handleToggleComplete = () => {
+    onToggleCompletion(show.title);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       whileHover={{ y: -5, scale: 1.02 }}
-      className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+      className={`bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group ${
+        show.completed ? 'ring-2 ring-green-200' : ''
+      }`}
     >
       {/* Card Header */}
-      <div className="relative bg-gradient-to-br from-primary-500 to-primary-600 p-4">
+      <div className={`relative p-4 ${
+        show.completed 
+          ? 'bg-gradient-to-br from-green-500 to-green-600' 
+          : 'bg-gradient-to-br from-primary-500 to-primary-600'
+      }`}>
         <div className="absolute top-2 right-2">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(show.category)}`}>
             {show.category}
           </span>
         </div>
-        
         <div className="flex items-center space-x-3 mt-4">
           <div className="bg-white/20 p-2 rounded-lg">
-            <SafeIcon icon={FiPlay} className="h-6 w-6 text-white" />
+            <motion.button
+              onClick={handleToggleComplete}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className={`w-6 h-6 rounded border-2 border-white flex items-center justify-center transition-all duration-200 ${
+                show.completed 
+                  ? 'bg-white text-green-600' 
+                  : 'bg-transparent hover:bg-white/20'
+              }`}
+            >
+              {show.completed && (
+                <SafeIcon icon={FiCheck} className="h-4 w-4" />
+              )}
+            </motion.button>
           </div>
           <div className="text-white flex-1">
-            <h3 className="font-semibold text-lg leading-tight">{show.title}</h3>
+            <h3 className={`font-semibold text-lg leading-tight ${
+              show.completed ? 'line-through opacity-90' : ''
+            }`}>
+              {show.title}
+            </h3>
+            {show.completed && (
+              <p className="text-xs text-white/80 mt-1">Completed</p>
+            )}
           </div>
         </div>
       </div>
@@ -121,7 +158,7 @@ const ShowCard = ({ show, index, onUpdate }) => {
               </>
             )}
           </div>
-          
+
           <div className="flex items-center space-x-2">
             {isEditing ? (
               <>
@@ -155,9 +192,10 @@ const ShowCard = ({ show, index, onUpdate }) => {
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="bg-primary-500 hover:bg-primary-600 text-white p-2 rounded-lg transition-colors duration-200"
+                  onClick={handleDelete}
+                  className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors duration-200"
                 >
-                  <SafeIcon icon={FiPlay} className="h-4 w-4" />
+                  <SafeIcon icon={FiTrash2} className="h-4 w-4" />
                 </motion.button>
               </>
             )}

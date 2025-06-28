@@ -2,18 +2,21 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
+import ViewToggle from './ViewToggle';
 
 const { FiPlay, FiSearch, FiFilter, FiPlus } = FiIcons;
 
-const Header = ({ 
-  searchTerm, 
-  setSearchTerm, 
-  selectedCategory, 
-  setSelectedCategory, 
-  categories, 
-  showFilter, 
+const Header = ({
+  searchTerm,
+  setSearchTerm,
+  selectedCategory,
+  setSelectedCategory,
+  categories,
+  showFilter,
   setShowFilter,
-  onAddShow 
+  onAddShow,
+  currentView,
+  onViewChange
 }) => {
   return (
     <motion.header
@@ -32,11 +35,11 @@ const Header = ({
               <SafeIcon icon={FiPlay} className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-              Video Catalog
+              TV Show Catalog
             </h1>
           </motion.div>
 
-          {/* Search, Filter, and Add */}
+          {/* Search, Filter, View Toggle, and Add */}
           <div className="flex items-center space-x-4">
             {/* Search Bar */}
             <div className="relative">
@@ -65,6 +68,9 @@ const Header = ({
             >
               <SafeIcon icon={FiFilter} className="h-5 w-5" />
             </motion.button>
+
+            {/* View Toggle */}
+            <ViewToggle currentView={currentView} onViewChange={onViewChange} />
 
             {/* Add Show Button */}
             <motion.button

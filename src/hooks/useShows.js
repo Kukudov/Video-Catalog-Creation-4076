@@ -6,6 +6,7 @@ export const useShows = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [loading, setLoading] = useState(true);
   const [shows, setShows] = useState(showsData);
+  const [currentView, setCurrentView] = useState('grid');
 
   useEffect(() => {
     // Simulate loading delay
@@ -17,17 +18,33 @@ export const useShows = () => {
   }, []);
 
   const updateShow = (title, newSeason, newEpisode) => {
-    setShows(prevShows => 
-      prevShows.map(show => 
-        show.title === title 
+    setShows(prevShows =>
+      prevShows.map(show =>
+        show.title === title
           ? { ...show, season: newSeason, episode: newEpisode }
           : show
       )
     );
   };
 
+  const deleteShow = (title) => {
+    setShows(prevShows =>
+      prevShows.filter(show => show.title !== title)
+    );
+  };
+
   const addShow = (newShow) => {
-    setShows(prevShows => [...prevShows, newShow]);
+    setShows(prevShows => [...prevShows, { ...newShow, completed: false }]);
+  };
+
+  const toggleShowCompletion = (title) => {
+    setShows(prevShows =>
+      prevShows.map(show =>
+        show.title === title
+          ? { ...show, completed: !show.completed }
+          : show
+      )
+    );
   };
 
   const filteredShows = useMemo(() => {
@@ -57,6 +74,10 @@ export const useShows = () => {
     setSelectedCategory,
     loading,
     updateShow,
-    addShow
+    deleteShow,
+    addShow,
+    toggleShowCompletion,
+    currentView,
+    setCurrentView
   };
 };
